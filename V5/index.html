@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Academia de Ajedrez Pro - Score</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="score-board">
+      <div class="score-item">Blancas: <span id="scoreBlancas">0</span></div>
+      <div class="score-item">Negras: <span id="scoreNegras">0</span></div>
+    </div>
+    <div class="status">
+      <span id="turnLabel">Turno: Blancas</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="board-container">
+      <div id="board" class="board"></div>
+      <div class="controls">
+        <button id="btnUndo">Deshacer</button>
+        <button id="btnReset">Reiniciar</button>
+        <button id="btnFinish" style="background: #e74c3c;">Terminar Partida</button>
+      </div>
+      <div class="advice-panel">
+        <p id="msg">Partida en curso...</p>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <h3>Registro de Jugadas</h3>
+      <ol id="moves" class="moves-list"></ol>
+    </aside>
+  </main>
+
+  <script src="chess.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

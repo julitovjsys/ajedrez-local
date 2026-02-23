@@ -1,0 +1,32 @@
+:root {
+  --bg: #0b1220; --panel: #0f1a2e;
+  --light: #f0d9b5; --dark: #b58863;
+}
+
+body { background: var(--bg); color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 65px);
+  grid-template-rows: repeat(8, 65px);
+  border: 5px solid #1a263a;
+}
+
+.square {
+  width: 65px; height: 65px;
+  display: flex; justify-content: center; align-items: center;
+  font-size: 45px; cursor: pointer; position: relative;
+}
+
+.square span { pointer-events: none; } /* Importante: la pieza no bloquea el clic */
+
+.square.light { background: var(--light); color: #222; }
+.square.dark { background: var(--dark); color: #222; }
+.square.selected { background: #ffe066 !important; }
+
+.square.legal::after {
+  content: "●"; position: absolute; font-size: 14px; color: rgba(0,0,0,0.2);
+}
+
+.controls { margin-top: 20px; text-align: center; }
+button { padding: 10px 20px; cursor: pointer; background: #2c3e50; color: white; border: none; margin: 5px; }

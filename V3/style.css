@@ -1,0 +1,159 @@
+:root {
+  --bg: #0b1220;
+  --panel: #162238;
+  --light: #f0d9b5;
+  --dark: #b58863;
+  --accent: #7ff0b2;
+  --danger: #ff7b7b;
+}
+
+body { 
+  background: var(--bg); 
+  color: #fff; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  margin: 0; 
+  padding: 20px;
+}
+
+.topbar { 
+  text-align: center; 
+  border-bottom: 2px solid #1a263a; 
+  margin-bottom: 20px; 
+  padding-bottom: 10px;
+}
+
+.status {
+  font-weight: bold;
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+/* CONTENEDOR PRINCIPAL: Tablero | Historial */
+.layout { 
+  display: flex; 
+  justify-content: center; 
+  gap: 30px; 
+  max-width: 1100px; 
+  margin: 0 auto; 
+}
+
+/* COLUMNA IZQUIERDA: Tablero */
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 65px);
+  grid-template-rows: repeat(8, 65px);
+  width: 520px; 
+  height: 520px;
+  border: 5px solid #1a263a;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.square {
+  width: 65px; 
+  height: 65px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  font-size: 45px; 
+  cursor: pointer; 
+  position: relative;
+}
+
+/* Evitar que la pieza bloquee los clics */
+.square span { pointer-events: none; z-index: 2; }
+
+.square.light { background: var(--light); color: #222; }
+.square.dark { background: var(--dark); color: #222; }
+
+/* Resaltados de juego */
+.square.selected { background: #ffe066 !important; }
+
+.square.legal::after {
+  content: "●"; 
+  position: absolute; 
+  font-size: 16px; 
+  color: rgba(0,0,0,0.15); 
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* COLUMNA DERECHA: Sidebar */
+.sidebar {
+  width: 350px; /* Ancho optimizado para frases largas */
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #2d3e5e;
+  height: 520px; 
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #2d3e5e;
+  padding-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+/* LISTA DE MOVIMIENTOS DESCRIPTIVOS */
+.moves-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  font-family: 'Segoe UI', sans-serif;
+  color: #e0e6ed;
+  margin-top: 10px;
+  padding: 0;
+  list-style: none; /* Quitamos números porque el texto ya es descriptivo */
+}
+
+.moves-list li {
+  padding: 10px;
+  border-bottom: 1px solid #2d3e5e;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.moves-list li:hover {
+  background: rgba(127, 240, 178, 0.05);
+}
+
+/* PANEL DE BOTONES */
+.controls { 
+  margin-top: 15px; 
+  display: flex;
+  gap: 10px;
+}
+
+button { 
+  flex: 1;
+  padding: 12px; 
+  cursor: pointer; 
+  background: #2c3e50; 
+  color: white; 
+  border: none; 
+  border-radius: 4px; 
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #3e5871;
+}
+
+/* MENSAJES DEL ENTRENADOR */
+.advice-panel { 
+  margin-top: 20px; 
+  padding: 15px; 
+  background: #1a263a; 
+  border-radius: 4px; 
+  border-left: 4px solid var(--accent);
+  width: 520px; /* Alineado con el tablero */
+  box-sizing: border-box;
+}
+
+#msg {
+  margin: 0;
+  font-size: 14px;
+  color: #bdc3c7;
+}
