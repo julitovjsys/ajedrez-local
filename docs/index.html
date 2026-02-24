@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#161512">
+  <meta charset="UTF-8" />
+
+  <!-- CRÍTICO PARA ANDROID -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#161512" />
 
   <title>Academia Ajedrez Gael V4.3 - Pro Clock</title>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
   <audio id="sndMove" src="https://images.chesscomfiles.com/chess-themes/sounds/_standard/move-self.mp3"></audio>
   <audio id="sndCapture" src="https://images.chesscomfiles.com/chess-themes/sounds/_standard/capture.mp3"></audio>
@@ -21,7 +24,7 @@
     <div class="academy-status">
       <div class="player-profile" id="profile-w">
         <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="user-avatar">
+          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="user-avatar" alt="GAEL">
         </div>
         <div class="player-info">
           <span class="p-rank">Cinturón Blanco</span>
@@ -33,11 +36,13 @@
 
       <div class="central-clock">
         <div class="timer-display" id="mainTimer">00:00</div>
-        <div style="font-size: 0.6rem; color: #aaa; margin-bottom: 5px;">TIEMPO DE TURNO</div>
-        <div id="setupMatch">
-          <input type="text" id="guestName" placeholder="Nombre Amigo..." class="input-guest">
+        <div class="timer-sub">TIEMPO DE TURNO</div>
+
+        <div id="setupMatch" class="setup-match">
+          <input type="text" id="guestName" placeholder="Nombre Amigo..." class="input-guest" maxlength="18" />
           <button id="btnStart" class="btn-start">▶ DESAFIAR</button>
         </div>
+
         <div id="turnAnnouncer" class="turn-announcer">ESPERANDO...</div>
       </div>
 
@@ -49,7 +54,7 @@
           <div id="advantageB" class="adv-badge"></div>
         </div>
         <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="user-avatar" id="avatar-opponent">
+          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="user-avatar" id="avatar-opponent" alt="INVITADO">
         </div>
       </div>
     </div>
@@ -57,12 +62,17 @@
 
   <main class="layout">
     <section class="board-container">
-      <div id="board" class="board"></div>
+      <div id="board" class="board" aria-label="Tablero de ajedrez"></div>
+
       <div class="controls">
         <button id="btnUndo" class="btn-large">↶ Deshacer</button>
         <button id="btnFlipToggle" class="btn-large">🔄 Giro: ON</button>
         <button id="btnAnalysis" class="btn-large btn-profesor">🎓 Profesor: OFF</button>
         <button id="btnReset" class="btn-large btn-danger">✖ Limpiar Todo</button>
+      </div>
+
+      <div class="mobile-hint">
+        <b>Modo móvil:</b> Toca una pieza → toca destino para mover. (Drag funciona mejor en PC)
       </div>
     </section>
 
@@ -72,7 +82,8 @@
     </aside>
   </main>
 
-  <script src="chess.js"></script>
+  <!-- OJO: en Pages no existe /docs/chess.js, existe /docs/vendor/chess.js -->
+  <script src="vendor/chess.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
