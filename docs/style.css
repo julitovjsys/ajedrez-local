@@ -1,153 +1,187 @@
 /* =============================
-   FUTURISTIC MOBILE GAME UI
-   (sin tocar funcionalidades)
+   PREMIUM FUTURISTIC UI
+   (UI only - no logic changes)
    ============================= */
 
 :root{
-  --bg1:#0b0c10;
-  --bg2:#121420;
+  --bg0:#060712;
+  --bg1:#0b0c18;
   --glass: rgba(255,255,255,0.06);
-  --border: rgba(255,255,255,0.10);
-  --text:#ffffff;
-  --muted:#a6b0c3;
+  --glass2: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.12);
+  --text:#f3f6ff;
+  --muted:#a7b0c6;
   --neon:#00f5c4;
+  --neon2:#7c3aed;
   --danger:#ff4d6d;
 
-  /* el tablero SIEMPRE cabe horizontalmente */
-  --sq: calc((100vw - 24px) / 8);
+  --pad: 12px;
+  --radius: 18px;
+
+  /* board square size: always fits mobile width */
+  --sq: calc((100vw - (var(--pad) * 2) - 2px) / 8);
 }
 
 *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-html,body{ margin:0; padding:0; height:100%; }
+html, body { height:100%; margin:0; padding:0; }
 body{
-  background: radial-gradient(1200px 700px at 20% 0%, rgba(0,245,196,.12), transparent 55%),
-              radial-gradient(900px 600px at 85% 20%, rgba(255,77,109,.10), transparent 55%),
-              linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 600px at 20% 0%, rgba(0,245,196,.14), transparent 55%),
+    radial-gradient(900px 600px at 90% 20%, rgba(124,58,237,.14), transparent 55%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow-x:hidden;
 }
 
-/* ===== Header ===== */
-.main-header{
-  padding: 10px 10px 0 10px;
-  display:flex;
-  justify-content:center;
-}
-
-.academy-status{
-  width: min(1100px, 100%);
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  backdrop-filter: blur(16px);
-  padding: 10px;
-  display: grid;
-  grid-template-columns: 1fr;
+/* =============================
+   HUD (Top bar)
+   ============================= */
+.hud{
+  position: sticky;
+  top:0;
+  z-index: 30;
+  padding: 10px var(--pad);
+  display:grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: 10px;
+  background: linear-gradient(180deg, rgba(6,7,18,.86), rgba(6,7,18,.45));
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Perfiles compactos */
-.player-profile{
+.hud-left, .hud-right{
   display:flex;
   align-items:center;
-  gap:10px;
-  justify-content: space-between;
+  gap: 10px;
+  min-width:0;
 }
 
-.avatar-wrapper{
-  width:44px; height:44px;
+.hud-right{ justify-content:flex-end; }
+
+.avatar-pill{
+  width:42px; height:42px;
   border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border:1px solid var(--border);
+  background: rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.10);
   display:flex;
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  box-shadow: 0 0 20px rgba(0,245,196,.12);
+  box-shadow: 0 0 24px rgba(0,245,196,.14);
   flex: 0 0 auto;
 }
-
-.user-avatar{
-  width:52px;
-  height:52px;
+.avatar{
+  width:52px; height:52px;
   display:block;
 }
 
-.player-info{
-  flex: 1 1 auto;
-  min-width: 0;
-  line-height: 1.1;
+.hud-meta{
+  min-width:0;
+  line-height: 1.05;
 }
+.hud-meta.right{ text-align:right; }
 
-.p-name{
-  font-weight: 900;
-  font-size: 0.98rem;
-  letter-spacing: .4px;
+.hud-name{
+  font-weight: 1000;
+  font-size: .92rem;
+  letter-spacing: .5px;
   white-space: nowrap;
-  overflow: hidden;
+  overflow:hidden;
   text-overflow: ellipsis;
 }
-
-.p-rank{
+.hud-sub{
   color: var(--muted);
-  font-size: .74rem;
+  font-weight: 700;
+  font-size: .72rem;
 }
 
-.p-score{
-  flex: 0 0 auto;
-  font-weight: 900;
-  font-size: 1.05rem;
-  padding: 7px 10px;
-  border-radius: 14px;
-  border:1px solid rgba(0,245,196,.28);
-  background: rgba(0,245,196,.10);
-}
-
-/* Clock compacto */
-.central-clock{
-  text-align:center;
-  background: rgba(255,255,255,0.04);
-  border:1px solid var(--border);
-  border-radius: 16px;
-  padding: 10px;
-}
-
-.timer-display{
-  font-size: 1.7rem;
-  font-weight: 1000;
-  letter-spacing: 1.5px;
+.adv{
+  margin-left: 6px;
   color: var(--neon);
-  text-shadow: 0 0 14px rgba(0,245,196,.35);
+  font-weight: 1000;
 }
 
-.turn-announcer{
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: .78rem;
-  font-weight: 800;
+.hud-score{
+  font-weight: 1000;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(0,245,196,.10);
+  border: 1px solid rgba(0,245,196,.22);
+  flex: 0 0 auto;
 }
 
-/* ===== Layout ===== */
-.layout{
-  width: min(1100px, 100%);
-  margin: 10px auto 16px auto;
-  padding: 0 10px;
+.hud-center{
+  min-width: 160px;
   display:flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 4px;
 }
 
-/* ===== Board ===== */
-.board-container{
+.hud-timer{
+  font-weight: 1100;
+  font-size: 1.55rem;
+  letter-spacing: 1.4px;
+  color: var(--neon);
+  text-shadow: 0 0 16px rgba(0,245,196,.38);
+}
+.hud-turn{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: .72rem;
+}
+
+.hud-setup{
+  display:flex;
+  gap: 8px;
+  align-items:center;
+  margin-top: 4px;
+}
+.hud-input{
+  width: 140px;
+  max-width: 46vw;
+  padding: 9px 10px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+  outline:none;
+}
+.hud-input::placeholder{ color: rgba(255,255,255,0.45); }
+
+.hud-btn{
+  width: 44px;
+  height: 40px;
+  border-radius: 14px;
+  border:1px solid rgba(0,245,196,.35);
+  background: rgba(0,245,196,.12);
+  color: var(--text);
+  font-weight: 1000;
+}
+
+/* =============================
+   Stage + Board
+   ============================= */
+.stage{
+  padding: 12px var(--pad) 94px var(--pad); /* bottom padding for dock */
+  display:flex;
+  justify-content:center;
+}
+
+.board-shell{
   width: 100%;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  backdrop-filter: blur(16px);
+  max-width: 720px;
+  border-radius: 22px;
   padding: 10px;
+  background: var(--glass);
+  border:1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 0 34px rgba(0,245,196,.08), 0 18px 44px rgba(0,0,0,.55);
 }
 
+/* The chess board grid from app.js */
 .board{
   width: calc(var(--sq) * 8);
   height: calc(var(--sq) * 8);
@@ -157,15 +191,26 @@ body{
   grid-template-rows: repeat(8, var(--sq));
   border-radius: 18px;
   overflow:hidden;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 0 30px rgba(0,245,196,.08), 0 14px 34px rgba(0,0,0,.55);
+  border:1px solid rgba(255,255,255,0.12);
   touch-action: none;
   user-select:none;
 }
 
-.square{ width: var(--sq); height: var(--sq); display:flex; align-items:center; justify-content:center; position:relative; }
-.square.light{ background:#e5e7eb; }
+/* Squares created by app.js */
+.square{
+  width: var(--sq);
+  height: var(--sq);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  transition: transform .08s ease, filter .08s ease;
+}
+
+.square.light{ background:#e6e8ee; }
 .square.dark{ background:#94a3b8; }
+
+.square:active{ transform: scale(0.985); }
 
 .piece{
   width: calc(var(--sq) * .92);
@@ -173,12 +218,17 @@ body{
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  filter: drop-shadow(0 8px 10px rgba(0,0,0,.24));
 }
 
+/* From app.js */
 .board.flipped{ transform: rotate(180deg); }
 .board.flipped .piece{ transform: rotate(180deg); }
 
-.square.selected{ outline: 4px solid rgba(0,245,196,.85); outline-offset:-4px; }
+.square.selected{
+  outline: 4px solid rgba(0,245,196,.85);
+  outline-offset:-4px;
+}
 .square.hint::after{
   content:"";
   width: 22%;
@@ -194,87 +244,164 @@ body{
   border: 3px solid rgba(255,77,109,.65);
   background: rgba(255,77,109,.10);
 }
-
-.square.last-move{ outline: 3px solid rgba(255,255,255,.35); outline-offset:-3px; }
-
+.square.last-move{
+  outline: 3px solid rgba(255,255,255,.35);
+  outline-offset:-3px;
+}
 .square.in-check{
   background: radial-gradient(circle, #ff4d4d 22%, #b33939 100%) !important;
-  animation: pulse .8s infinite;
+  animation: pulse .85s infinite;
 }
 @keyframes pulse{ 0%{opacity:1} 50%{opacity:.82} 100%{opacity:1} }
 
-/* ===== Controls ===== */
-.controls{
+/* =============================
+   Dock Controls (sticky bottom)
+   ============================= */
+.dock{
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  z-index: 40;
+  padding: 10px var(--pad) calc(10px + env(safe-area-inset-bottom)) var(--pad);
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-top: 10px;
+  background: linear-gradient(180deg, rgba(6,7,18,.10), rgba(6,7,18,.80));
+  backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255,255,255,0.10);
 }
 
-.btn-large{
-  min-height: 44px;
-  padding: 12px 10px;
+.dock-btn{
+  min-height: 48px;
   border-radius: 16px;
   border:1px solid rgba(255,255,255,0.12);
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-  color: #fff;
-  font-weight: 900;
-  font-size: .95rem;
-  cursor:pointer;
+  background: linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+  color: var(--text);
+  font-weight: 950;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
 }
-.btn-large:active{ transform: translateY(1px); }
-.btn-danger{
-  border-color: rgba(255,77,109,.35);
+
+.dock-btn:active{ transform: translateY(1px); }
+.dock-btn.danger{
+  border-color: rgba(255,77,109,.30);
   color: var(--danger);
 }
 
-/* ===== Sidebar / History ===== */
-.sidebar{
-  width: 100%;
-  background: var(--glass);
-  border: 1px solid var(--border);
+.dock-ico{ font-size: 1.05rem; }
+.dock-txt{ font-size: .86rem; }
+
+/* =============================
+   Floating history button + Drawer
+   ============================= */
+.fab{
+  position: fixed;
+  right: 14px;
+  bottom: 88px;
+  z-index: 45;
+  width: 52px;
+  height: 52px;
   border-radius: 18px;
-  backdrop-filter: blur(16px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color: var(--text);
+  font-weight: 1000;
+  background: rgba(124,58,237,.18);
+  border: 1px solid rgba(124,58,237,.35);
+  box-shadow: 0 0 26px rgba(124,58,237,.20);
+}
+
+.drawer{
+  position: fixed;
+  left: 0; right: 0;
+  bottom: -70vh;
+  height: 70vh;
+  z-index: 60;
+  border-radius: 22px 22px 0 0;
+  background: rgba(14,16,26,.92);
+  backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 -18px 40px rgba(0,0,0,.65);
+  transition: bottom .28s ease;
   overflow:hidden;
 }
 
-.sidebar-header{
-  padding: 12px;
-  font-weight: 1000;
+.drawer:target{
+  bottom: 0;
+}
+
+.drawer-head{
+  padding: 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
   border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+.drawer-title{
+  font-weight: 1000;
+  letter-spacing: .4px;
+}
+.drawer-close{
+  text-decoration:none;
+  color: var(--muted);
+  font-weight: 1000;
+  padding: 6px 10px;
+  border-radius: 12px;
+  border:1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.06);
 }
 
 .moves-list{
-  margin: 0;
-  padding: 12px 16px;
-  max-height: 32vh;        /* para que no tape el tablero */
+  margin:0;
+  padding: 14px 18px 18px 22px;
+  height: calc(70vh - 58px);
   overflow:auto;
-  font-size: .9rem;
-  color: #d3d8e6;
+  color:#d6dbec;
+  font-size:.95rem;
 }
 
-/* ===== Desktop ===== */
+/* scrim only for aesthetics (no JS needed) */
+.scrim{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+  z-index: 55;
+}
+.drawer:target ~ .scrim{
+  opacity: 1;
+  pointer-events: none; /* still no click trap */
+}
+
+/* =============================
+   Desktop tweaks
+   ============================= */
 @media (min-width: 900px){
-  :root{ --sq: 80px; }
+  :root{ --sq: 76px; }
 
-  .academy-status{
-    grid-template-columns: 1fr 1fr 1fr;
-    align-items:center;
+  .hud{
+    grid-template-columns: 1fr 320px 1fr;
+    padding: 12px 18px;
   }
 
-  .layout{
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
+  .stage{
+    padding-bottom: 20px;
   }
 
-  .board-container{ width: auto; }
-
-  .sidebar{
-    width: 320px;
+  .dock{
+    position: static;
+    max-width: 720px;
+    margin: 12px auto 18px auto;
+    border-radius: 18px;
   }
 
-  .moves-list{
-    max-height: calc(var(--sq) * 8 + 72px);
-  }
+  .fab{ display:none; }
+  .drawer{ display:none; }
+  .scrim{ display:none; }
 }

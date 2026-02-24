@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0c10" />
-
-  <title>Academia Ajedrez Gael - Neo</title>
+  <meta name="theme-color" content="#070910" />
+  <title>Academia Ajedrez Gael — Premium</title>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -14,65 +13,80 @@
 </head>
 
 <body>
-  <header class="main-header">
-    <div class="academy-status">
 
-      <div class="player-profile">
-        <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="user-avatar" alt="GAEL">
-        </div>
-        <div class="player-info">
-          <div class="p-name">GAEL</div>
-          <div class="p-rank">Cinturón Blanco</div>
-          <div id="advantageW" class="adv-badge"></div>
-        </div>
-        <div class="p-score" id="scoreBlancas">0</div>
+  <!-- Top HUD -->
+  <header class="hud">
+    <div class="hud-left">
+      <div class="avatar-pill">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="avatar" alt="GAEL">
       </div>
-
-      <div class="central-clock">
-        <div class="timer-display" id="mainTimer">00:00</div>
-        <div class="turn-announcer" id="turnAnnouncer">ESPERANDO...</div>
-
-        <!-- IMPORTANTÍSIMO: estos IDs los usa app.js -->
-        <div id="setupMatch" class="setup-match">
-          <input id="guestName" class="input-guest" type="text" placeholder="Nombre Amigo..." maxlength="18" />
-          <button id="btnStart" class="btn-start">▶ DESAFIAR</button>
-        </div>
+      <div class="hud-meta">
+        <div class="hud-name">GAEL</div>
+        <div class="hud-sub">Cinturón Blanco <span id="advantageW" class="adv"></span></div>
       </div>
+      <div id="scoreBlancas" class="hud-score">0</div>
+    </div>
 
-      <div class="player-profile">
-        <div class="p-score" id="scoreNegras">0</div>
-        <div class="player-info">
-          <div class="p-name" id="name-b">INVITADO</div>
-          <div class="p-rank">Oponente</div>
-          <div id="advantageB" class="adv-badge"></div>
-        </div>
-        <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="user-avatar" id="avatar-opponent" alt="INVITADO">
-        </div>
+    <div class="hud-center">
+      <div id="mainTimer" class="hud-timer">00:00</div>
+      <div id="turnAnnouncer" class="hud-turn">ESPERANDO...</div>
+      <div id="setupMatch" class="hud-setup">
+        <input id="guestName" class="hud-input" type="text" placeholder="Nombre Amigo..." maxlength="18" />
+        <button id="btnStart" class="hud-btn">▶</button>
       </div>
+    </div>
 
+    <div class="hud-right">
+      <div id="scoreNegras" class="hud-score">0</div>
+      <div class="hud-meta right">
+        <div id="name-b" class="hud-name">INVITADO</div>
+        <div class="hud-sub">Oponente <span id="advantageB" class="adv"></span></div>
+      </div>
+      <div class="avatar-pill">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="avatar" id="avatar-opponent" alt="INVITADO">
+      </div>
     </div>
   </header>
 
-  <main class="layout">
-    <section class="board-container">
+  <!-- Main -->
+  <main class="stage">
+    <section class="board-shell">
       <div id="board" class="board" aria-label="Tablero de ajedrez"></div>
-
-      <div class="controls">
-        <!-- IMPORTANTÍSIMO: estos IDs los usa app.js -->
-        <button id="btnUndo" class="btn-large">↶ Deshacer</button>
-        <button id="btnFlipToggle" class="btn-large">🔄 Giro</button>
-        <button id="btnAnalysis" class="btn-large">🎓 Profesor</button>
-        <button id="btnReset" class="btn-large btn-danger">✖ Reset</button>
-      </div>
     </section>
-
-    <aside class="sidebar">
-      <div class="sidebar-header">Historial Académico</div>
-      <ol id="moves" class="moves-list"></ol>
-    </aside>
   </main>
+
+  <!-- Sticky Dock Controls -->
+  <nav class="dock" aria-label="Controles">
+    <button id="btnUndo" class="dock-btn">
+      <span class="dock-ico">↶</span><span class="dock-txt">Deshacer</span>
+    </button>
+
+    <button id="btnFlipToggle" class="dock-btn">
+      <span class="dock-ico">🔄</span><span class="dock-txt">Giro</span>
+    </button>
+
+    <button id="btnAnalysis" class="dock-btn">
+      <span class="dock-ico">🎓</span><span class="dock-txt">Profesor</span>
+    </button>
+
+    <button id="btnReset" class="dock-btn danger">
+      <span class="dock-ico">✖</span><span class="dock-txt">Reset</span>
+    </button>
+  </nav>
+
+  <!-- Floating button to open history -->
+  <a class="fab" href="#history" aria-label="Abrir historial">≡</a>
+
+  <!-- History Drawer (CSS only) -->
+  <aside id="history" class="drawer" aria-label="Historial">
+    <div class="drawer-head">
+      <div class="drawer-title">Historial Académico</div>
+      <a class="drawer-close" href="#" aria-label="Cerrar">✕</a>
+    </div>
+    <ol id="moves" class="moves-list"></ol>
+  </aside>
+
+  <div class="scrim"></div>
 
   <script src="vendor/chess.js"></script>
   <script src="app.js"></script>
