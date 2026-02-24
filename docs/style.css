@@ -2,7 +2,7 @@
   --bg: #161512; --panel: #262421;
   --light: #dee3e6; --dark: #8ca2ad;
   --accent: #95bb4a;
-  --sq-size: 78px;
+  --sq-size: clamp(40px, 11vw, 78px);
 }
 
 body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -17,17 +17,129 @@ body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; 
 .main-header { padding: 15px; width: 100%; display: flex; justify-content: center; }
 .academy-status { display: flex; align-items: center; gap: 20px; background: var(--panel); padding: 10px 30px; border-radius: 12px; border: 1px solid #3c3934; text-align: center; }
 .layout { display: flex; justify-content: center; align-items: flex-start; gap: 30px; margin-top: 15px; }
-.board { display: grid; grid-template-columns: repeat(8, var(--sq-size)); grid-template-rows: repeat(8, var(--sq-size)); width: 624px; height: 624px; border: 8px solid #333; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--sq-size));
+  grid-template-rows: repeat(8, var(--sq-size));
+  width: calc(8 * var(--sq-size));
+  height: calc(8 * var(--sq-size));
+  border: 8px solid #333;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
 .square { width: var(--sq-size); height: var(--sq-size); display: flex; justify-content: center; align-items: center; position: relative; }
 .square.light { background: var(--light); }
 .square.dark { background: var(--dark); }
 .square.last-move { background: rgba(245, 246, 130, 0.6) !important; }
-.piece { width: 72px; height: 72px; background-size: contain; background-repeat: no-repeat; cursor: grab; }
+
+.piece {
+  width: calc(var(--sq-size) - 8px);
+  height: calc(var(--sq-size) - 8px);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .board.flipped { transform: rotate(180deg); }
 .board.flipped .piece { transform: rotate(180deg); }
+
 .btn-large { padding: 15px 10px; font-size: 0.9rem; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; background: #3c3934; color: #fff; border: none; margin-top: 10px; }
 .btn-profesor.active { background: #9b59b6 !important; }
 .sidebar { width: 320px; background: var(--panel); border-radius: 12px; height: 700px; display: flex; flex-direction: column; border: 1px solid #3c3934; }
 .moves-list { flex-grow: 1; padding: 15px; overflow-y: auto; list-style: none; font-size: 0.85rem; }
 .hidden { display: none !important; }
 .turn-announcer { font-weight: bold; color: var(--accent); font-size: 0.8rem; text-transform: uppercase; }
+
+/* ============================
+   Mobile / Android optimizations
+   (solo UI; no cambia lógica)
+   ============================ */
+
+:root {
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
+  --safe-right: env(safe-area-inset-right);
+}
+
+html, body { height: 100%; }
+
+body {
+  padding: calc(10px + var(--safe-top)) calc(10px + var(--safe-right)) calc(10px + var(--safe-bottom)) calc(10px + var(--safe-left));
+  box-sizing: border-box;
+}
+
+/* Evita zoom raro en inputs y mejora tacto */
+button, input, select, textarea {
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+/* Mejor “feel” táctil */
+.btn-large, button {
+  min-height: 44px;
+}
+
+/* Layout responsivo: apila en móvil */
+@media (max-width: 980px) {
+  .layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 8px;
+    width: 100%;
+  }
+
+  .academy-status {
+    width: 100%;
+    max-width: 680px;
+    padding: 10px 14px;
+    box-sizing: border-box;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    max-height: 44vh;
+  }
+
+  .moves-list {
+    max-height: 34vh;
+  }
+}
+
+/* Pantallas pequeñas: prioriza tablero */
+@media (max-width: 520px) {
+  :root {
+    --sq-size: clamp(40px, 12.2vw, 62px);
+  }
+
+  .main-header { padding: 10px; }
+
+  .academy-status {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .adv-badge { font-size: 0.75rem; }
+
+  /* Botones */
+  .btn-large {
+    padding: 12px 10px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+}
+
+/* Ultra-pequeño */
+@media (max-width: 380px) {
+  :root { --sq-size: clamp(38px, 12.8vw, 56px); }
+}

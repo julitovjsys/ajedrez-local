@@ -38,13 +38,20 @@
   }
 
   function calculateAdvantage() {
+    const board = game.board();
     let w = 0, b = 0;
-    game.board().flat().forEach(p => {
-      if (p) p.color === 'w' ? w += PIECE_VAL[p.type] : b += PIECE_VAL[p.type];
-    });
-    const diff = w - b;
-    document.getElementById("advantageW").textContent = diff > 0 ? `+${diff}` : "";
-    document.getElementById("advantageB").textContent = diff < 0 ? `+${Math.abs(diff)}` : "";
+    board.forEach(row => row.forEach(p => {
+      if (!p) return;
+      const v = PIECE_VAL[p.type] || 0;
+      if (p.color === 'w') w += v;
+      else b += v;
+    }));
+    return w - b;
+  }
+
+  function advantageLabel(diff) {
+    if (diff === 0) return "0";
+    return diff > 0 ? `+${diff}` : `-${Math.abs(diff)}`;
   }
 
   function render() {
@@ -58,60 +65,141 @@
 
     if (gameStarted) document.getElementById("turnAnnouncer").textContent = `TURNO DE: ${playerNames[turn]}`;
 
+    const diff = calculateAdvantage();
+    document.getElementById("advantage").textContent = advantageLabel(diff);
+
+    // Marca casillas del último movimiento
+    const lastFrom = lastMove.from, lastTo = lastMove.to;
+
     for (let r = 0; r < 8; r++) {
       for (let f = 0; f < 8; f++) {
         const sq = String.fromCharCode(97 + f) + (8 - r);
         const cell = document.createElement("div");
         cell.className = `square ${(r + f) % 2 === 0 ? 'light' : 'dark'}`;
+
+        // Last move highlight
+        if (sq === lastFrom || sq === lastTo) cell.classList.add("last-move");
+
+        // Check highlight
+        if (isCheck) {
+          const kingSq = findKingSquare(turn);
+          if (sq === kingSq) cell.classList.add("in-check");
+        }
+
         cell.dataset.square = sq;
-        if (sq === lastMove.from || sq === lastMove.to) cell.classList.add("last-move");
-        
+
         const piece = board[r][f];
         if (piece) {
-          if (piece.type === 'k' && piece.color === turn && isCheck) cell.classList.add("in-check");
-          const div = document.createElement("div");
-          div.className = "piece";
-          div.style.backgroundImage = `url(${PIECE_IMG[piece.color][piece.type]})`;
-          if (isAnalysisMode || (gameStarted && piece.color === turn)) {
-            div.draggable = true;
-            div.ondragstart = () => { window.selectedSq = sq; };
-          }
-          cell.appendChild(div);
+          const p = document.createElement("div");
+          p.className = "piece";
+          p.dataset.piece = piece.color + piece.type;
+          p.style.backgroundImage = `url(${PIECE_IMG[piece.color][piece.type]})`;
+
+          // Click move (modo profesor / click)
+          p.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (!gameStarted) return;
+            if (!isAnalysisMode) return; // modo profesor solamente
+            showLegalMoves(sq);
+          });
+
+          cell.appendChild(p);
         }
-        cell.ondragover = (e) => e.preventDefault();
-        cell.ondrop = onDrop;
+
+        // Click square
+        cell.addEventListener("click", () => {
+          if (!gameStarted) return;
+          if (!isAnalysisMode) return;
+          handleSquareClick(sq);
+        });
+
         boardEl.appendChild(cell);
       }
     }
+
     updateUI();
-    calculateAdvantage();
+    updateGameState();
   }
 
-  function onDrop(e) {
-    const to = e.target.closest(".square").dataset.square;
-    const from = window.selectedSq;
-    
-    if (isAnalysisMode) {
-      const p = game.get(from);
-      if (p) { game.remove(from); game.put(p, to); render(); }
-    } else {
-      const move = game.move({ from, to, promotion: "q" });
-      if (move) {
-        lastMove = { from, to };
-        if (game.in_check()) document.getElementById("sndCheck").play();
-        else if (move.captured) document.getElementById("sndCapture").play();
-        else document.getElementById("sndMove").play();
-
-        render();
-        if (game.game_over()) {
-            clearInterval(timerInterval);
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            Swal.fire("Fin de partida", `Ganador: ${game.turn() === 'w' ? playerNames.b : playerNames.w}`, "success").then(() => location.reload());
-        } else {
-            startTurnClock(); // CAMBIO CLAVE: Reiniciar el cronómetro al terminar un movimiento legal
+  function findKingSquare(color) {
+    const board = game.board();
+    for (let r = 0; r < 8; r++) {
+      for (let f = 0; f < 8; f++) {
+        const p = board[r][f];
+        if (p && p.type === 'k' && p.color === color) {
+          return String.fromCharCode(97 + f) + (8 - r);
         }
       }
     }
+    return null;
+  }
+
+  let selectedSquare = null;
+
+  function showLegalMoves(from) {
+    clearHighlights();
+    selectedSquare = from;
+    const moves = game.moves({ square: from, verbose: true });
+    moves.forEach(m => {
+      const el = document.querySelector(`.square[data-square="${m.to}"]`);
+      if (el) el.style.outline = "3px solid rgba(149,187,74,.9)";
+    });
+    const fromEl = document.querySelector(`.square[data-square="${from}"]`);
+    if (fromEl) fromEl.style.outline = "3px solid rgba(255,255,255,.75)";
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll(".square").forEach(sq => {
+      sq.style.outline = "none";
+    });
+  }
+
+  function handleSquareClick(to) {
+    if (!selectedSquare) return;
+    const move = game.move({ from: selectedSquare, to, promotion: "q" });
+    if (move) {
+      lastMove = { from: move.from, to: move.to };
+      startTurnClock();
+      selectedSquare = null;
+      render();
+    }
+  }
+
+  function updateGameState() {
+    const statusEl = document.getElementById("status");
+    if (!gameStarted) { statusEl.textContent = "Esperando…"; return; }
+
+    if (game.in_checkmate()) {
+      statusEl.textContent = "Jaque mate";
+      const winner = game.turn() === 'w' ? 'b' : 'w';
+      scores[winner]++;
+      localStorage.setItem('chess_scores', JSON.stringify(scores));
+      celebrate(winner);
+      gameStarted = false;
+      clearInterval(timerInterval);
+      return;
+    }
+
+    if (game.in_draw()) {
+      statusEl.textContent = "Tablas";
+      gameStarted = false;
+      clearInterval(timerInterval);
+      return;
+    }
+
+    statusEl.textContent = game.in_check() ? "Jaque" : "En juego";
+  }
+
+  function celebrate(winner) {
+    try {
+      confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+    } catch (e) {}
+    Swal.fire({
+      icon: "success",
+      title: "¡Ganador!",
+      text: `Ganó ${playerNames[winner]}`,
+      confirmButtonText: "OK"
+    });
   }
 
   btnStart.onclick = () => {
@@ -151,6 +239,13 @@
 
   document.getElementById("btnReset").onclick = () => { localStorage.clear(); location.reload(); };
   document.getElementById("btnUndo").onclick = () => { game.undo(); render(); };
+
+  // Mobile: re-render en cambios de tamaño/orientación (Android)
+  const _rerender = () => {
+    try { render(); } catch (e) {}
+  };
+  window.addEventListener('resize', () => requestAnimationFrame(_rerender));
+  window.addEventListener('orientationchange', () => setTimeout(_rerender, 50));
 
   render();
 })();
