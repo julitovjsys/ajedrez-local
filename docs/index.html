@@ -1,89 +1,72 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0f14">
+<title>Academia Ajedrez Gael - Neo Edition</title>
 
-  <!-- CRÍTICO PARA ANDROID -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#161512" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <title>Academia Ajedrez Gael V4.3 - Pro Clock</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-  <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <audio id="sndMove" src="https://images.chesscomfiles.com/chess-themes/sounds/_standard/move-self.mp3"></audio>
-  <audio id="sndCapture" src="https://images.chesscomfiles.com/chess-themes/sounds/_standard/capture.mp3"></audio>
-  <audio id="sndCheck" src="https://images.chesscomfiles.com/chess-themes/sounds/_standard/move-check.mp3"></audio>
 
-  <header class="main-header">
-    <div class="academy-status">
-      <div class="player-profile" id="profile-w">
-        <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="user-avatar" alt="GAEL">
-        </div>
-        <div class="player-info">
-          <span class="p-rank">Cinturón Blanco</span>
-          <span class="p-name">GAEL</span>
-          <div id="advantageW" class="adv-badge"></div>
-        </div>
-        <div class="p-score" id="scoreBlancas">0</div>
+<header class="main-header">
+  <div class="academy-status">
+    <div class="player-profile">
+      <div class="avatar-wrapper">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Gael" class="user-avatar">
       </div>
-
-      <div class="central-clock">
-        <div class="timer-display" id="mainTimer">00:00</div>
-        <div class="timer-sub">TIEMPO DE TURNO</div>
-
-        <div id="setupMatch" class="setup-match">
-          <input type="text" id="guestName" placeholder="Nombre Amigo..." class="input-guest" maxlength="18" />
-          <button id="btnStart" class="btn-start">▶ DESAFIAR</button>
-        </div>
-
-        <div id="turnAnnouncer" class="turn-announcer">ESPERANDO...</div>
+      <div class="player-info">
+        <div class="p-name">GAEL</div>
+        <div class="p-rank">Cinturón Blanco</div>
       </div>
-
-      <div class="player-profile" id="profile-b">
-        <div class="p-score" id="scoreNegras">0</div>
-        <div class="player-info">
-          <span class="p-rank">Oponente</span>
-          <span class="p-name" id="name-b">INVITADO</span>
-          <div id="advantageB" class="adv-badge"></div>
-        </div>
-        <div class="avatar-wrapper">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="user-avatar" id="avatar-opponent" alt="INVITADO">
-        </div>
-      </div>
+      <div class="p-score" id="scoreBlancas">0</div>
     </div>
-  </header>
 
-  <main class="layout">
-    <section class="board-container">
-      <div id="board" class="board" aria-label="Tablero de ajedrez"></div>
+    <div class="central-clock">
+      <div class="timer-display" id="mainTimer">00:00</div>
+      <div class="turn-announcer" id="turnAnnouncer">ESPERANDO...</div>
+    </div>
 
-      <div class="controls">
-        <button id="btnUndo" class="btn-large">↶ Deshacer</button>
-        <button id="btnFlipToggle" class="btn-large">🔄 Giro: ON</button>
-        <button id="btnAnalysis" class="btn-large btn-profesor">🎓 Profesor: OFF</button>
-        <button id="btnReset" class="btn-large btn-danger">✖ Limpiar Todo</button>
+    <div class="player-profile">
+      <div class="avatar-wrapper">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Invitado" class="user-avatar" id="avatar-opponent">
       </div>
-
-      <div class="mobile-hint">
-        <b>Modo móvil:</b> Toca una pieza → toca destino para mover. (Drag funciona mejor en PC)
+      <div class="player-info">
+        <div class="p-name" id="name-b">INVITADO</div>
+        <div class="p-rank">Oponente</div>
       </div>
-    </section>
+      <div class="p-score" id="scoreNegras">0</div>
+    </div>
+  </div>
+</header>
 
-    <aside class="sidebar">
-      <div class="sidebar-header">Historial Académico</div>
-      <ol id="moves" class="moves-list"></ol>
-    </aside>
-  </main>
+<main class="layout">
 
-  <!-- OJO: en Pages no existe /docs/chess.js, existe /docs/vendor/chess.js -->
-  <script src="vendor/chess.js"></script>
-  <script src="app.js"></script>
+  <section class="board-container">
+    <div id="board" class="board"></div>
+
+    <div class="controls">
+      <button id="btnUndo" class="btn-large">↶ Deshacer</button>
+      <button id="btnFlipToggle" class="btn-large">🔄 Giro</button>
+      <button id="btnAnalysis" class="btn-large">🎓 Profesor</button>
+      <button id="btnReset" class="btn-large btn-danger">✖ Reset</button>
+    </div>
+  </section>
+
+  <aside class="sidebar">
+    <div class="sidebar-header">Historial Académico</div>
+    <ol id="moves" class="moves-list"></ol>
+  </aside>
+
+</main>
+
+<script src="vendor/chess.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
